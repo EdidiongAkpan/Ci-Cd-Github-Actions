@@ -1,4 +1,4 @@
-#Buildtime
+#buildtime
 FROM maven:3.8.7-eclipse-temurin-17 AS build
 LABEL owner="Edidiongakpan18@gmail.com" description="dockerfile for sprinboot voting app"
 RUN groupadd --system spring \
