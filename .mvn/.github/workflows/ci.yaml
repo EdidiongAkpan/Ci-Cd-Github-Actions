@@ -1,13 +1,13 @@
 name: app ci
 on:
   push:
-    branches: [ feature/ci-workflows ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest kyk\la
 
     steps:
       - name: Checkout source code
