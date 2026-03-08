@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 'g'
+          java-version: '17'
 
       - name: Build with Maven
-        run: mvn clean install -DskipTest
+        run: mvn clean install -DskipTests
