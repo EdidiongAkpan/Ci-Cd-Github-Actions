@@ -1,7 +1,7 @@
 name: app ci
 on:
   push:
-    branches: [ feature/ci-workflows]
+    branches: [ feature/ci-workflows ]
   pull_request:
     branches: [ main ]
 
