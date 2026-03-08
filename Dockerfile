@@ -1,4 +1,4 @@
-#buildtime
+#buildtime#####################################
 FROM maven:3.8.7-eclipse-temurin-17 AS build
 LABEL owner="Edidiongakpan18@gmail.com" description="dockerfile for sprinboot voting app"
 RUN groupadd --system spring \
@@ -17,3 +17,4 @@ USER spring
 VOLUME ["/app/logs/volume"]
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "MySpring_Boot_aa23v_VotingApp_Final-0.0.1-SNAPSHOT.jar"]
+######################################
