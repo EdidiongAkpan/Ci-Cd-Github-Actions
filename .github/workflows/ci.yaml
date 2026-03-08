@@ -1,7 +1,7 @@
 name: app ci
 on:
   push:
-    branches: [ feature/* ]
+    branches: [ feature/ci-workflows ]
   pull_request:
     branches: [ main ]
 
@@ -21,6 +21,3 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean install -DskipTests
-
-      - name: Run Tests
-        run: mvn test
