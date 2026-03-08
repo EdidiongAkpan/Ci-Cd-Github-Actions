@@ -18,3 +18,5 @@ VOLUME ["/app/logs/volume"]
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "MySpring_Boot_aa23v_VotingApp_Final-0.0.1-SNAPSHOT.jar"]
 ######################################
+#########################################
+########################################
