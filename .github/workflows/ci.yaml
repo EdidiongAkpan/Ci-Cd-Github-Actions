@@ -97,7 +97,7 @@ jobs:
       # Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t voting-app .
+          docker build -t voting-app:v2 .
 
       # Tag image for ECR
       - name: Tag image
