@@ -56,7 +56,8 @@ jobs:
         run: mvn clean install -DskipTests   
       - name: Run codeQL analysis
         uses: github/codeql-action/analyze@v3 
-  
+
+   # login, build, tag and push docker image to docker hub
   Docker-Build-Push:
     runs-on: ubuntu-latest
     needs: [build, security-scan-codeQL]
@@ -73,5 +74,44 @@ jobs:
         with:
           context: .
           push: true
-          tags: edidiongakpan18/voting-app:v2    
+          tags: edidiongakpan18/voting-app:${{ github.sha }}
+
+    #build and push docker image to ECR
+  #docker-build-push-ECR:
+    #runs-on: ubuntu-latest
+   # needs: [ build, security-scan-codeQL ]
+    #steps:
+      #- name: Checkout source code
+        #uses: actions/checkout@v4
+
+      # Configure AWS credentials
+      #- name: Configure AWS credentials
+        #uses: aws-actions/configure-aws-credentials@v4
+        #with:
+          #aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          #aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          #aws-region: ${{ secrets.AWS_REGION }}
+
+      # Login to Amazon ECR
+      #- name: Login to Amazon ECR
+        #uses: aws-actions/amazon-ecr-login@v2
+
+      # Build Docker image
+      #- name: Build Docker image
+        #run: |
+          #docker build -t voting-app .
+
+      # Tag image for ECR
+      #- name: Tag image
+        #run: |
+          #docker tag voting-app:v2 \
+          #${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/voting-app:v2
+
+      # Push image
+      #- name: Push image
+        #run: |
+          #docker push \
+         # ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/voting-app:v2    
+          
+                      
       
