@@ -1,4 +1,4 @@
-#apiVersion: argoproj.io/v1alpha1
+apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: voting-app-argocd
@@ -16,3 +16,4 @@ spec:
     automated:
       prune: true
       selfHeal: true
+      ################3
