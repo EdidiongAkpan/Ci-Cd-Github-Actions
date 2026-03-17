@@ -1,0 +1,18 @@
+#apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: voting-app-argocd
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/EdidiongAkpan/Ci-Cd-Github-Actions.git
+    targetRevision: main
+    path: kubernetes
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
