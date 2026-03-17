@@ -78,18 +78,18 @@ jobs:
           tags: ${{secrets.DOCKER_USERNAME}}/voting-app:${{ github.sha }}
 
       #update image tag in kubernetes deployment file
-      - name: update image tag in kubernetes deployment file
-        run: |
-          sed -i "s|image: .*|image: ${{secrets.DOCKER_USERNAME}}/voting-app:${{ github.sha }}|" kubernetes/app-deployment.yml
+      #- name: update image tag in kubernetes deployment file
+        #run: |
+          #sed -i "s|image: .*|image: ${{secrets.DOCKER_USERNAME}}/voting-app:${{ github.sha }}|" kubernetes/app-deployment.yml
 
       #commit and push image tag update to github repo for agro cd to deploy updated image to k8s cluster 
-      - name: commit and push updated image tag to github repo for argo cd
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add kubernetes/app-deployment.yml
-          git commit -m "update image of ${{github.sha}}"
-          git push   
+      #- name: commit and push updated image tag to github repo for argo cd
+        #run: |
+          #git config --global user.name "github-actions"
+          #git config --global user.email "github-actions@github.com"
+          #git add kubernetes/app-deployment.yml
+          #git commit -m "update image of ${{github.sha}}"
+          #git push   
 
     #build and push docker image to ECR
   #docker-build-push-ECR:
