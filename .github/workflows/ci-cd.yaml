@@ -1,0 +1,142 @@
+name: ci-cd-workflow
+on:
+  push:
+    branches: [ feature/ci-workflows ]
+    paths-ignore:
+      - 'kubernetes/**' 
+      - 'README.md'
+  pull_request:
+    branches: [ main ]
+    paths-ignore: 
+      - 'README.md'
+      - 'kubernetes/**'
+
+permissions:
+  contents: write  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  
+
+      - name: cache build dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven- 
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+
+      - name: upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: target/*.jar
+
+  security-scan-codeQL:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+      - name: initialize codeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+      - name: Build with Maven
+        run: mvn clean install -DskipTests   
+      - name: Run codeQL analysis
+        uses: github/codeql-action/analyze@v3 
+
+   # login, build, tag and push docker image to docker hub
+  Docker-Build-Push-argocd:
+    runs-on: ubuntu-latest
+    needs: [build, security-scan-codeQL]
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - name: login to docker hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+      - name: Build and push docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{secrets.DOCKER_USERNAME}}/voting-app:${{ github.sha }}
+
+      #update image tag in kubernetes deployment file
+      - name: update image tag in kubernetes deployment file
+        run: |
+         sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:.*|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:${{ github.sha }}|g" kubernetes/app-deployment.yml
+
+      #commit and push image tag update to github repo for agro cd to deploy updated image to k8s cluster 
+      - name: commit and push updated image tag to github repo for argo cd
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add kubernetes/app-deployment.yml
+          git commit -m "update image of ${{github.sha}}"     
+          git push origin HEAD:${{ github.ref_name }}
+
+    #build and push docker image to ECR
+  #docker-build-push-ECR:
+    #runs-on: ubuntu-latest
+   # needs: [ build, security-scan-codeQL ]
+    #steps:
+      #- name: Checkout source code
+        #uses: actions/checkout@v4
+
+      # Configure AWS credentials
+      #- name: Configure AWS credentials
+        #uses: aws-actions/configure-aws-credentials@v4
+        #with:
+          #aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          #aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          #aws-region: ${{ secrets.AWS_REGION }}
+
+      # Login to Amazon ECR
+      #- name: Login to Amazon ECR
+        #uses: aws-actions/amazon-ecr-login@v2
+
+      # Build Docker image
+      #- name: Build Docker image
+        #run: |
+          #docker build -t voting-app .
+
+      # Tag image for ECR
+      #- name: Tag image
+        #run: |
+          #docker tag voting-app:v2 \
+          #${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/voting-app:v2
+
+      # Push image
+      #- name: Push image
+        #run: |
+          #docker push \
+         # ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/voting-app:v2    
+          
+                      
