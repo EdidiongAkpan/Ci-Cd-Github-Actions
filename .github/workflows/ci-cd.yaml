@@ -86,7 +86,7 @@ jobs:
           tags: ${{secrets.DOCKER_USERNAME}}/voting-app:${{ github.sha }}
 
       #update image tag in kubernetes deployment file
-      - name: update image tag in kubernetes deployment file#
+      - name: update image tag in kubernetes deployment file
         run: |
           sed -i "s|image: .*|image: ${{secrets.DOCKER_USERNAME}}/voting-app:${{ github.sha }}|" kubernetes/app-deployment.yml
 
@@ -97,7 +97,7 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add kubernetes/app-deployment.yml
           git commit -m "update image of ${{github.sha}}"     
-          git push origin HEAD:${{ github.ref_name }
+          git push origin HEAD:${{ github.ref_name }}
 
     #build and push docker image to ECR
   #docker-build-push-ECR:
