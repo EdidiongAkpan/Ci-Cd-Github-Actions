@@ -91,7 +91,7 @@ jobs:
       #update image tag in kubernetes deployment file
       - name: update image tag in kubernetes deployment file
         run: |
-         sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:.*|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:${{ github.sha }}|g" kubernetes/app-deployment.yml
+           sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:.*|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:${{ github.sha }}|" kubernetes/app-deployment.yml 
 
       #commit and push image tag update to github repo for agro cd to deploy updated image to k8s cluster 
       - name: commit and push updated image tag to github repo for argo cd
