@@ -23,7 +23,7 @@ spec:
 
       initContainers:
         - name: wait-for-database
-          image: edidiongakpan18/voting-app:d05ff0e5a11615e75919910d1f4aea8068149353
+          image: busybox:latest
           command:
             - sh
             - -c
@@ -31,7 +31,7 @@ spec:
 
       containers:
         - name: voting-app
-          image: busybox:1.37
+          image: edidiongakpan18/voting-app:d05ff0e5a11615e75919910d1f4aea8068149353
           ports:
             - containerPort: 8080
           resources:
