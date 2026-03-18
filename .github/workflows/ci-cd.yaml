@@ -79,7 +79,7 @@ jobs:
           tags: ${{secrets.DOCKER_USERNAME}}/voting-app:${{ github.sha }}
 
       #update image tag in kubernetes deployment file
-      #- name: update image tag in kubernetes deployment file
+      #- name: update image tag in kubernetes deployment file#
         #run: |
           #sed -i "s|image: .*|image: ${{secrets.DOCKER_USERNAME}}/voting-app:${{ github.sha }}|" kubernetes/app-deployment.yml
 
