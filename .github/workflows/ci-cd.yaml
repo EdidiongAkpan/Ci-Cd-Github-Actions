@@ -23,6 +23,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  
 
       - name: cache build dependencies
         uses: actions/cache@v4
@@ -95,8 +96,8 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git add kubernetes/app-deployment.yml
-          git commit -m "update image of ${{github.sha}}"
-          git push origin feature/ci-workflows
+          git commit -m "update image of ${{github.sha}}"     
+          git push origin HEAD:${{ github.ref_name }
 
     #build and push docker image to ECR
   #docker-build-push-ECR:
