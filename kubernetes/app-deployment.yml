@@ -27,7 +27,7 @@ spec:
           command:
             - sh
             - -c
-            - until nc -z db-service 3306; do echo waiting for database to connect; sleep 10s; done
+            - until nc -z db-service 3306; do echo waiting for database to connect; sleep 9s; done
 
       containers:
         - name: voting-app
