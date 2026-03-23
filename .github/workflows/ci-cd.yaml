@@ -69,6 +69,7 @@ jobs:
    # login, build, tag and push docker image to docker hub
   Docker-Build-Push-argocd:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [build, security-scan-codeQL]
     steps:
       - name: Checkout source code
