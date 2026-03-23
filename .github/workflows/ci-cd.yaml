@@ -50,6 +50,7 @@ jobs:
 
   security-scan-codeQL:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     needs: build
     permissions:
       contents: read
