@@ -70,7 +70,6 @@ jobs:
   Docker-Build-Push-argocd:
     runs-on: ubuntu-latest
     needs: [build, security-scan-codeQL]
-    if: github.event_name == 'push'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
