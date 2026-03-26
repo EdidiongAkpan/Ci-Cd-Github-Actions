@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
 
     steps:
       - name: Checkout source code
@@ -50,6 +50,7 @@ jobs:
 
   security-scan-codeQL:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     needs: build
     permissions:
       contents: read
@@ -70,7 +71,6 @@ jobs:
   Docker-Build-Push-argocd:
     runs-on: ubuntu-latest
     needs: [build, security-scan-codeQL]
-    if: github.event_name == 'push'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -88,19 +88,23 @@ jobs:
           push: true
           tags: ${{secrets.DOCKER_USERNAME}}/voting-app:${{ github.sha }}
 
+
+
+          
+
       #update image tag in kubernetes deployment file
-      - name: update image tag in kubernetes deployment file
-        run: |
-           sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:.*|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:${{ github.sha }}|" kubernetes/app-deployment.yml 
+      #- name: update image tag in kubernetes deployment file
+        #run: |
+           #sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:.*|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:${{ github.sha }}|" kubernetes/app-deployment.yml 
 
       #commit and push image tag update to github repo for agro cd to deploy updated image to k8s cluster 
-      - name: commit and push updated image tag to github repo for argo cd
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add kubernetes/app-deployment.yml
-          git commit -m "update image of ${{github.sha}}"     
-          git push origin HEAD:${{ github.ref_name }}
+      #- name: commit and push updated image tag to github repo for argo cd
+        #run: |
+          #git config --global user.name "github-actions"
+          #git config --global user.email "github-actions@github.com"
+          #git add kubernetes/app-deployment.yml
+          #git commit -m "update image of ${{github.sha}}"     
+          #git push origin HEAD:${{ github.ref_name }}
 
     #build and push docker image to ECR
   #docker-build-push-ECR:
