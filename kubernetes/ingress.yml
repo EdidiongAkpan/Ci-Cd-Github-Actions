@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: ""  #domain
+    - host: ""  #domain name
       http:
         paths:
           - path: /
