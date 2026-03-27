@@ -75,7 +75,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          fetch-depth: 0
       - name: login to docker hub
         uses: docker/login-action@v3
         with:
@@ -87,24 +87,19 @@ jobs:
           context: .
           push: true
           tags: ${{secrets.DOCKER_USERNAME}}/voting-app:${{ github.sha }}
-
-
-
-          
-
-      #update image tag in kubernetes deployment file
-      #- name: update image tag in kubernetes deployment file
-        #run: |
-           #sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:.*|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:${{ github.sha }}|" kubernetes/app-deployment.yml 
-
+      #CD
       #commit and push image tag update to github repo for agro cd to deploy updated image to k8s cluster 
-      #- name: commit and push updated image tag to github repo for argo cd
-        #run: |
-          #git config --global user.name "github-actions"
-          #git config --global user.email "github-actions@github.com"
-          #git add kubernetes/app-deployment.yml
-          #git commit -m "update image of ${{github.sha}}"     
-          #git push origin HEAD:${{ github.ref_name }}
+      - name: commit and push updated image tag to github repo for argo cd
+        if: github.event_name == 'push'
+        run: | 
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com" 
+          git checkout ${{ github.ref_name }}
+          git pull origin ${{ github.ref_name }} --rebase
+          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:.*|image: ${{ secrets.DOCKER_USERNAME }}/voting-app:${{ github.sha }}|" kubernetes/app-deployment.yml
+          git add kubernetes/app-deployment.yml
+          git commit -m "update image of ${{github.sha}}" || exit 0    
+          git push origin ${{ github.ref_name }}
 
     #build and push docker image to ECR
   #docker-build-push-ECR:
