@@ -31,7 +31,7 @@ spec:
 
       containers:
         - name: voting-app
-          image: edidiongakpan18/voting-app:017a2953ff0ab506a902db834b369f2c4df1e2b7
+          image: edidiongakpan18/voting-app:3cdaaf107cfcf0a2de4bc22d9235fe6395cd1030
           ports:
             - containerPort: 8080
           resources:
